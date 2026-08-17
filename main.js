@@ -1,11 +1,14 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
+let depthBuffer = new Float32Array(canvas.width * canvas.height);
+let colorBuffer = new Uint32Array(canvas.width * canvas.height);
+
 const keys = {};//キーの状態
 document.addEventListener("keydown", e => keys[e.key] = true);//キーが押された時
 document.addEventListener("keyup", e => keys[e.key] = false);//キーが押されてない時
 
-const triangels = [{ verts: [{ x: 0, y: 0, z: 4 }, { x: 4, y: 0, z: 8 }, { x: 4, y: 0, z: 4 }], color: "#00ff00" }];
+const triangles = [{ verts: [{ x: 0, y: 0, z: 4 }, { x: 4, y: 0, z: 8 }, { x: 4, y: 0, z: 4 }], color: 0xff00ff00 }];
 
 //プレイヤーの目
 const camera = {

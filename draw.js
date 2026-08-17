@@ -1,5 +1,6 @@
 /*                                                                                                                                                  */
 function draw() {
+    /*
     ctx.fillStyle = "#ff0000"
     drawPoint({ x: 0, y: 0, z: 4 });
     drawPoint({ x: 4, y: 0, z: 4 });
@@ -9,7 +10,7 @@ function draw() {
     drawPoint({ x: 4, y: 0, z: 8 });
     drawPoint({ x: 0, y: 4, z: 8 });
     drawPoint({ x: 4, y: 4, z: 8 });
-    for (const tri of triangels) {
+    for (const tri of triangles) {
         const v1 = worldToCamera(tri.verts[0]);
         const v2 = worldToCamera(tri.verts[1]);
         const v3 = worldToCamera(tri.verts[2]);
@@ -23,6 +24,35 @@ function draw() {
             draw2DTriangle(a, b, c, t.color);
         }
     }
+    */
+    clearBuffers();
+
+    for (const tri of triangles) {
+
+        // ① ワールド → カメラ座標
+        const v0 = worldToCamera(tri.verts[0]);
+        const v1 = worldToCamera(tri.verts[1]);
+        const v2 = worldToCamera(tri.verts[2]);
+
+        // ② ニアクリップ
+        const clipped = clip3DTriangle(v0, v1, v2, tri.color);
+
+        // ③ クリップ後の三角形をすべて処理
+        for (const t of clipped) {
+
+            // ④ 投影（スクリーン座標）
+            const p0 = projectPoint(t.verts[0]);
+            const p1 = projectPoint(t.verts[1]);
+            const p2 = projectPoint(t.verts[2]);
+
+            if (!p0 || !p1 || !p2) continue;
+
+            // ⑤ Zバッファ三角形描画
+            drawTriangleZBuffer(p0, p1, p2, t.color);
+        }
+    }
+
+    present();
 }
 
 function drawPoint(v) {
@@ -161,4 +191,106 @@ function projectPoint(v) {
     const x = (v.x * f) / v.z;
     const y = (v.y * f) / v.z;
     return { x: canvas.width / 2 + (canvas.height / 2) * x, y: canvas.height / 2 - (canvas.height / 2) * y };
+}
+
+function clearBuffers() {
+    const far = 1e9;
+
+    for (let i = 0; i < depthBuffer.length; i++) {
+        depthBuffer[i] = far;
+        colorBuffer[i] = 0xff000000;
+    }
+}
+
+function drawPixelZ(x, y, z, color) {
+    // 配列の位置
+    const idx = y * canvas.width + x;
+
+    // Zテスト（手前なら描く）
+    if (z < depthBuffer[idx]) {
+        depthBuffer[idx] = z;
+        colorBuffer[idx] = color; // ARGB形式の整数(0xff000000とか)
+    }
+}
+
+
+function interpolateZ(px, py, p0, p1, p2) {
+    // 三角形の向き（符号）
+    const area = (p1.x - p0.x) * (p2.y - p0.y) - (p2.x - p0.x) * (p1.y - p0.y);
+
+    // ピクセルに対する3つの符号
+    const w0 = (p1.x - p0.x) * (py - p0.y) - (p1.y - p0.y) * (px - p0.x);
+
+    const w1 = (p2.x - p1.x) * (py - p1.y) - (p2.y - p1.y) * (px - p1.x);
+
+    const w2 = (p0.x - p2.x) * (py - p2.y) - (p0.y - p2.y) * (px - p2.x);
+
+    const b0 = w1 / area;
+    const b1 = w2 / area;
+    const b2 = 1 - b0 - b1;
+
+    return p0.z * b0 + p1.z * b1 + p2.z * b2;
+}
+
+//三角形の内側か
+//引数全てスクリーン座標
+//px,pyは調べるピクセル
+//p0,p1,p2は三角形の頂点
+function isInsideTriangle(px, py, p0, p1, p2) {
+
+    const w0 = (p1.x - p0.x) * (py - p0.y) - (p1.y - p0.y) * (px - p0.x);
+
+    const w1 = (p2.x - p1.x) * (py - p1.y) - (p2.y - p1.y) * (px - p1.x);
+
+    const w2 = (p0.x - p2.x) * (py - p2.y) - (p0.y - p2.y) * (px - p2.x);
+
+    // 3つの符号が全部同じなら中
+    return (
+        (w0 >= 0 && w1 >= 0 && w2 >= 0) ||
+        (w0 <= 0 && w1 <= 0 && w2 <= 0)
+    );
+}
+
+function drawTriangleZBuffer(p0, p1, p2, color) {
+    const w = canvas.width;
+    const h = canvas.height;
+
+    // バウンディングボックス
+    const minX = Math.max(0, Math.floor(Math.min(p0.x, p1.x, p2.x)));
+    const maxX = Math.min(w - 1, Math.ceil(Math.max(p0.x, p1.x, p2.x)));
+    const minY = Math.max(0, Math.floor(Math.min(p0.y, p1.y, p2.y)));
+    const maxY = Math.min(h - 1, Math.ceil(Math.max(p0.y, p1.y, p2.y)));
+
+    for (let y = minY; y <= maxY; y++) {
+        for (let x = minX; x <= maxX; x++) {
+
+            //三角形の中判定
+            if (!isInsideTriangle(x, y, p0, p1, p2)) continue;
+
+            //z補間
+            const z = interpolateZ(x, y, p0, p1, p2);
+
+            //Zテスト＋描画
+            drawPixelZ(x, y, z, color);
+        }
+    }
+}
+
+function present() {
+    const w = canvas.width;
+    const h = canvas.height;
+
+    // Canvas用のImageDataを作る
+    const img = ctx.createImageData(w, h);
+
+    // ImageDataのバッファをUint32Arrayとして扱う
+    const data = new Uint32Array(img.data.buffer);
+
+    // colorBuffer の内容をそのままコピー
+    for (let i = 0; i < colorBuffer.length; i++) {
+        data[i] = colorBuffer[i];
+    }
+
+    // Canvasに描画
+    ctx.putImageData(img, 0, 0);
 }
