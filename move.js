@@ -1,4 +1,4 @@
-function move() {
+function playerMove() {
     const sinY = Math.sin(degToRad(camera.rot.y));
     const cosY = Math.cos(degToRad(camera.rot.y));
 
@@ -39,5 +39,28 @@ function move() {
     }
     if (keys["ArrowDown"]) {
         camera.rot.x += 1;
+    }
+
+    //FOV
+    if (keys["n"]) {
+        camera.FOV++;
+    }
+    if (keys["m"]) {
+        camera.FOV--;
+    }
+
+    //カメラの向き,FOV制限
+    if (camera.rot.x > 90) {
+        camera.rot.x = 90;
+    }
+    if (camera.rot.x < -90) {
+        camera.rot.x = -90;
+    }
+
+    if (camera.FOV < 30) {
+        camera.FOV = 30;
+    }
+    if (camera.FOV > 150) {
+        camera.FOV = 150;
     }
 }
