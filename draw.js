@@ -21,7 +21,10 @@ function chunkDraw() {
 //zBufferに描く
 //p0, p1, p2はcanvas座標
 function drawTriangleZBuffer(p0, p1, p2, color) {
-    //
+    const minX = Math.floor(Math.min(p0.x, p1.x, p2.x));
+    const maxX = Math.ceil(Math.max(p0.x, p1.x, p2.x));
+    const minY = Math.floor(Math.min(p0.y, p1.y, p2.y));
+    const maxY = Math.ceil(Math..max(p0.y, p1.y, p2.y));
 }
 
 //camera.nearでクリップした三角形0 or 1 or 2個を返す
