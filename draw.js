@@ -90,6 +90,21 @@ function interpolateZ(px, py, p0, p1, p2) {
     return p0.z * b0 + p1.z * b1 + p2.z * b2;
 }
 
+//データをキャンバスに描画
+function present() {
+    const w = canvas.width;
+    const h = canvas.height;
+
+    const img = ctx.createImageData(w, h);
+    const data = new Uint32Array(img.data.buffer);
+
+    for (let i = 0; i < colorBuffer.length; i++) {
+        data[i] = colorBuffer[i];
+    }
+
+    ctx.putImageData(img, 0, 0);
+}
+
 
 //camera.nearでクリップした三角形0 or 1 or 2個を返す
 //クリップ後の三角形は元の三角形と同じ反時計回りの頂点の順番
