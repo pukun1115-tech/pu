@@ -81,7 +81,10 @@ function mainLoop() {
     sortChunks();
 
     playerMove();
+    
+    clearBuffers();
     chunkDraw();
+    present();
 
     requestAnimationFrame(mainLoop);
 }
