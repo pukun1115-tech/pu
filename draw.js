@@ -12,7 +12,8 @@ function chunkDraw() {
                 const b = projectPoint(t.verts[1]);
                 const c = projectPoint(t.verts[2]);
                 if (a === null || b === null || c === null) return;
-                draw2DTriangle(a, b, c, t.color);
+                //draw2DTriangle(a, b, c, t.color);
+                drawTriangleZBuffer(a, b, c, t.color);
             }
         }
     }
@@ -235,5 +236,5 @@ function projectPoint(v) {
 
     const x = (v.x * f) / v.z;
     const y = (v.y * f) / v.z;
-    return { x: canvas.width / 2 + (canvas.height / 2) * x, y: canvas.height / 2 - (canvas.height / 2) * y };
+    return { x: canvas.width / 2 + (canvas.height / 2) * x, y: canvas.height / 2 - (canvas.height / 2) * y, z: v.z };
 }
