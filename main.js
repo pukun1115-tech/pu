@@ -74,9 +74,6 @@ function mainLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     resize();
 
-    depthBuffer = new Float32Array(canvas.width * canvas.height);//一次元
-    colorBuffer = new Uint32Array(canvas.width * canvas.height);
-
     for (const c of chunks) {
         c.generateTriangles();
     };
@@ -85,6 +82,9 @@ function mainLoop() {
         chunkDraw();
     }
     else {
+
+        depthBuffer = new Float32Array(canvas.width * canvas.height);//一次元
+        colorBuffer = new Uint32Array(canvas.width * canvas.height);
         clearBuffers();
         chunkDraw();
         present();
