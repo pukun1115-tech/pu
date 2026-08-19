@@ -32,6 +32,13 @@ function drawTriangleZBuffer(p0, p1, p2, color) {
             if (!isInsideTriangle(x, y, p0, p1, p2)) continue;
 
             //ピクセルごとにz座標を計算
+            const z = interpolateZ(x, y, p0, p1, p2);
+
+            const idx = y * canvas.width + x;
+            if (z < depthBuffer[idx]) {
+                depthBuffer[idx] = z;
+                colorBuffer[idx] = color;
+            }
         }
     }
 }
@@ -57,6 +64,32 @@ function isInsideTriangle(px, py, v0, v1, v2) {
         (w0 <= 0 && w1 <= 0 && w2 <= 0)
     );
 }
+
+//z補完
+function interpolateZ(px, py, p0, p1, p2) {
+    const area =
+        (p1.x - p0.x) * (p2.y - p0.y) -
+        (p2.x - p0.x) * (p1.y - p0.y);
+
+    const w0 =
+        (p1.x - p0.x) * (py - p0.y) -
+        (p1.y - p0.y) * (px - p0.x);
+
+    const w1 =
+        (p2.x - p1.x) * (py - p1.y) -
+        (p2.y - p1.y) * (px - p1.x);
+
+    const w2 =
+        (p0.x - p2.x) * (py - p2.y) -
+        (p0.y - p2.y) * (px - p2.x);
+
+    const b0 = w1 / area;
+    const b1 = w2 / area;
+    const b2 = 1 - b0 - b1;
+
+    return p0.z * b0 + p1.z * b1 + p2.z * b2;
+}
+
 
 //camera.nearでクリップした三角形0 or 1 or 2個を返す
 //クリップ後の三角形は元の三角形と同じ反時計回りの頂点の順番
