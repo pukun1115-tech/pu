@@ -1,7 +1,7 @@
 /*                                                                                                                                                  */
 function chunkDraw() {
-    for (const c of chunks) {
-        for (const tri of c.triangles) {
+    for (const ch of chunks) {
+        for (const tri of ch.triangles) {
             const v1 = worldToCamera(tri.verts[0]);
             const v2 = worldToCamera(tri.verts[1]);
             const v3 = worldToCamera(tri.verts[2]);
