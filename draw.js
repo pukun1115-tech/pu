@@ -84,12 +84,14 @@ function interpolateZ(px, py, p0, p1, p2) {
         (p0.x - p2.x) * (py - p2.y) -
         (p0.y - p2.y) * (px - p2.x);
 
-    const b0 = w1 / area;
-    const b1 = w2 / area;
-    const b2 = 1 - b0 - b1;
+    // 正しい対応
+    const b0 = w0 / area; // p0 の重み
+    const b1 = w1 / area; // p1 の重み
+    const b2 = w2 / area; // p2 の重み
 
     return p0.z * b0 + p1.z * b1 + p2.z * b2;
 }
+
 
 //データをキャンバスに描画
 function present() {
