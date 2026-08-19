@@ -5,9 +5,8 @@ const keys = {};//キーの状態
 document.addEventListener("keydown", e => keys[e.key] = true);//キーが押された時
 document.addEventListener("keyup", e => keys[e.key] = false);//キーが押されてない時
 
-//初期設定
-const depthBuffer = new Float32Array(canvas.width * canvas.height);//一次元
-const colorBuffer = new Uint32Array(canvas.width * canvas.height);
+const depthBuffer;
+const colorBuffer;
 
 //zBufferをclear
 function clearBuffers() {
@@ -32,6 +31,7 @@ const camera = {
     rot: { x: 45, y: 45, z: 0 },
     FOV: 90,
     near: 0.05,
+    isZBuffer: true
 };
 
 for (let i = 0; i < 3; i++) {
@@ -73,18 +73,23 @@ function mainLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     resize();
 
-    //いまはループの中にないと困る
+    depthBuffer = new Float32Array(canvas.width * canvas.height);//一次元
+    colorBuffer = new Uint32Array(canvas.width * canvas.height);
+
     for (const c of chunks) {
         c.generateTriangles();
     };
-
-    sortChunks();
+    if (!camera.isZBuffer) {
+        sortChunks();
+        chunkDraw();
+    }
+    else {
+        clearBuffers();
+        chunkDraw();
+        present();
+    }
 
     playerMove();
-    
-    clearBuffers();
-    chunkDraw();
-    present();
 
     requestAnimationFrame(mainLoop);
 }
