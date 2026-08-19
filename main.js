@@ -5,6 +5,19 @@ const keys = {};//キーの状態
 document.addEventListener("keydown", e => keys[e.key] = true);//キーが押された時
 document.addEventListener("keyup", e => keys[e.key] = false);//キーが押されてない時
 
+//初期設定
+const depthBuffer = new Float32Array(canvas.width * canvas.height);//一次元
+const colorBuffer = new Uint32Array(canvas.width * canvas.height);
+
+//zBufferをclear
+function clearBuffers() {
+    const far = 1e9;//とても大きい
+    for (let i = 0; i < depthBuffer.length; i++) {
+        depthBuffer[i] = far;
+        colorBuffer[i] = 0xff000000;//黒背景(ARGB)(0xは16進数ですよという意味)
+    }
+}
+
 const triangles = [{ verts: [{ x: 0, y: 0, z: 4 }, { x: 4, y: 0, z: 8 }, { x: 4, y: 0, z: 4 }], color: "#00ff00" }];
 let chunks = [];
 
