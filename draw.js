@@ -46,7 +46,7 @@ function drawTriangleZBuffer(p0, p1, p2, color) {
 //三角形の中か
 //計算式わかんない
 //各辺に対する右左(正負)が全て等しければ内側ということだけわかった
-function isInsideTriangle(px, py, v0, v1, v2) {
+function isInsideTriangle(px, py, p0, p1, p2) {
     const w0 =
         (p1.x - p0.x) * (py - p0.y) -
         (p1.y - p0.y) * (px - p0.x);
