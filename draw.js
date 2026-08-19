@@ -25,6 +25,17 @@ function drawTriangleZBuffer(p0, p1, p2, color) {
     const maxX = Math.ceil(Math.max(p0.x, p1.x, p2.x));
     const minY = Math.floor(Math.min(p0.y, p1.y, p2.y));
     const maxY = Math.ceil(Math.max(p0.y, p1.y, p2.y));
+
+    for (let y = minY; y <= maxY; y++) {
+        for (let x = minX; x <= maxX; x++) {
+            //全部
+        }
+    }
+}
+
+//三角形の中か
+function isInsideTriangle(px, py, v0, v1, v2) {
+    //
 }
 
 //camera.nearでクリップした三角形0 or 1 or 2個を返す
