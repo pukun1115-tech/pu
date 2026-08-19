@@ -32,7 +32,7 @@ const camera = {
     rot: { x: 45, y: 45, z: 0 },
     FOV: 90,
     near: 0.05,
-    isZBuffer: true
+    isZBuffer: false
 };
 
 for (let i = 0; i < 5; i++) {
