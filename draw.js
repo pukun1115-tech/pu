@@ -19,7 +19,7 @@ function chunkDraw() {
 }
 
 //zBufferに描く
-//p0, p1, p2はcanvas座標
+//p0, p1, p2はcanvas座標xとyと3Dのz座標を持つ
 function drawTriangleZBuffer(p0, p1, p2, color) {
     const minX = Math.floor(Math.min(p0.x, p1.x, p2.x));
     const maxX = Math.ceil(Math.max(p0.x, p1.x, p2.x));
@@ -29,13 +29,33 @@ function drawTriangleZBuffer(p0, p1, p2, color) {
     for (let y = minY; y <= maxY; y++) {
         for (let x = minX; x <= maxX; x++) {
             //全部
+            if (!isInsideTriangle(x, y, p0, p1, p2)) continue;
+
+            //ピクセルごとにz座標を計算
         }
     }
 }
 
 //三角形の中か
+//計算式わかんない
+//各辺に対する右左(正負)が全て等しければ内側ということだけわかった
 function isInsideTriangle(px, py, v0, v1, v2) {
-    //
+    const w0 =
+        (p1.x - p0.x) * (py - p0.y) -
+        (p1.y - p0.y) * (px - p0.x);
+
+    const w1 =
+        (p2.x - p1.x) * (py - p1.y) -
+        (p2.y - p1.y) * (px - p1.x);
+
+    const w2 =
+        (p0.x - p2.x) * (py - p2.y) -
+        (p0.y - p2.y) * (px - p2.x);
+
+    return (
+        (w0 >= 0 && w1 >= 0 && w2 >= 0) ||
+        (w0 <= 0 && w1 <= 0 && w2 <= 0)
+    );
 }
 
 //camera.nearでクリップした三角形0 or 1 or 2個を返す
