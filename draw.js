@@ -1,11 +1,15 @@
 /*                                                                                                                                                  */
 function chunkDraw() {
+    //全チャンク
     for (const ch of chunks) {
+        //チャンクの全三角形
         for (const tri of ch.triangles) {
+            //カメラから見た座標にする
             const v1 = worldToCamera(tri.verts[0]);
             const v2 = worldToCamera(tri.verts[1]);
             const v3 = worldToCamera(tri.verts[2]);
 
+            //近すぎる三角形をクリップする
             const cliped = clip3DTriangle(v1, v2, v3, tri.color);
             for (const t of cliped) {
                 const a = projectPoint(t.verts[0]);
@@ -27,74 +31,43 @@ function chunkDraw() {
 //zBufferに描く
 //p0, p1, p2はcanvas座標xとyと3Dのz座標を持つ
 function drawTriangleZBuffer(p0, p1, p2, color) {
+    //バウンディングボックス
     const minX = Math.floor(Math.min(p0.x, p1.x, p2.x));
     const maxX = Math.ceil(Math.max(p0.x, p1.x, p2.x));
     const minY = Math.floor(Math.min(p0.y, p1.y, p2.y));
     const maxY = Math.ceil(Math.max(p0.y, p1.y, p2.y));
 
+    //全部のピクセルを調べる
     for (let y = minY; y <= maxY; y++) {
         for (let x = minX; x <= maxX; x++) {
-            //全部
-            if (!isInsideTriangle(x, y, p0, p1, p2)) continue;
+            //三角形の中のみ
+            if (!isInsideTriangle({ x: x, y: y }, p0, p1, p2)) continue;
 
-            //ピクセルごとにz座標を計算
-            const z = interpolateZ(x, y, p0, p1, p2);
-
-            const idx = y * canvas.width + x;
-            if (z < depthBuffer[idx]) {
-                depthBuffer[idx] = z;
-                colorBuffer[idx] = color;
-            }
+            //z補完
+            const z = interpolateZ({ x: x, y: y }, p0, p1, p2);
         }
     }
 }
 
 //三角形の中か
-//計算式わかんない
-//各辺に対する右左(正負)が全て等しければ内側ということだけわかった
-function isInsideTriangle(px, py, p0, p1, p2) {
-    const w0 =
-        (p1.x - p0.x) * (py - p0.y) -
-        (p1.y - p0.y) * (px - p0.x);
-
-    const w1 =
-        (p2.x - p1.x) * (py - p1.y) -
-        (p2.y - p1.y) * (px - p1.x);
-
-    const w2 =
-        (p0.x - p2.x) * (py - p2.y) -
-        (p0.y - p2.y) * (px - p2.x);
+//各辺に対する右左(正負)が全て等しければ内側ということ
+//面積で考えると分かった
+function isInsideTriangle(p, v0, v1, v2) {
+    //p0 => p1
+    const w0 = ((v1.x - v0.x) * (p.y - v0.y)) - ((v1.y - v0.y) * (p.x - v0.x));
+    //p1 => p2
+    const w1 = ((v2.x - v1.x) * (p.y - v1.y)) - ((v2.y - v1.y) * (p.x - v1.x));
+    //p2 => p0
+    const w2 = ((v0.x - v2.x) * (p.y - v2.y)) - ((v0.y - v2.y) * (p.x - v2.x));
 
     return (
-        (w0 >= 0 && w1 >= 0 && w2 >= 0) ||
-        (w0 <= 0 && w1 <= 0 && w2 <= 0)
+        (w0 >= 0 && w1 >= 0 && w2 >= 0) || (w0 <= 0 && w1 <= 0 && w2 <= 0)
     );
 }
 
 //z補完
-function interpolateZ(px, py, p0, p1, p2) {
-    const area =
-        (p1.x - p0.x) * (p2.y - p0.y) -
-        (p2.x - p0.x) * (p1.y - p0.y);
-
-    const w0 =
-        (p1.x - p0.x) * (py - p0.y) -
-        (p1.y - p0.y) * (px - p0.x);
-
-    const w1 =
-        (p2.x - p1.x) * (py - p1.y) -
-        (p2.y - p1.y) * (px - p1.x);
-
-    const w2 =
-        (p0.x - p2.x) * (py - p2.y) -
-        (p0.y - p2.y) * (px - p2.x);
-
-    // 正しい対応
-    const b0 = w0 / area; // p0 の重み
-    const b1 = w1 / area; // p1 の重み
-    const b2 = w2 / area; // p2 の重み
-
-    return p0.z * b0 + p1.z * b1 + p2.z * b2;
+function interpolateZ(p, v0, v1, v2) {
+    //
 }
 
 
@@ -117,6 +90,16 @@ function present() {
 //camera.nearでクリップした三角形0 or 1 or 2個を返す
 //クリップ後の三角形は元の三角形と同じ反時計回りの頂点の順番
 function clip3DTriangle(a, b, c, color) {
+    //線分とcamera.nearの交点を返す
+    function intersectNear(a, b) {
+        const t = (a.z - camera.near) / (a.z - b.z);//tはaから交点までの割合
+        return {
+            x: a.x + (b.x - a.x) * t,
+            y: a.y + (b.y - a.y) * t,
+            z: camera.near
+        };
+    }
+
     const aok = (a.z >= camera.near);
     const bok = (b.z >= camera.near);
     const cok = (c.z >= camera.near);
@@ -166,16 +149,6 @@ function clip3DTriangle(a, b, c, color) {
             return [{ verts: [ra, a, rb], color: color }, { verts: [rb, a, b], color: color }];
         }
     }
-}
-
-//線分とcamera.nearの交点を返す
-function intersectNear(a, b) {
-    const t = (a.z - camera.near) / (a.z - b.z);//tはaから交点までの割合
-    return {
-        x: a.x + (b.x - a.x) * t,
-        y: a.y + (b.y - a.y) * t,
-        z: camera.near
-    };
 }
 
 //canvasに三角形を描く関数
@@ -237,7 +210,7 @@ function projectPoint(v) {
     //ラジアンFOV
     const FOV = degToRad(camera.FOV)
     //カメラとスクリーンの距離を求める
-    const f = 1 / Math.tan((FOV / 2));//0.05は調整用
+    const f = 1 / Math.tan((FOV / 2));
 
     if (v.z < camera.near) return null;
 

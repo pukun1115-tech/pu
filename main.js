@@ -5,7 +5,7 @@ const keys = {};//キーの状態
 document.addEventListener("keydown", e => keys[e.key] = true);//キーが押された時
 document.addEventListener("keyup", e => keys[e.key] = false);//キーが押されてない時
 
-//
+//グローバル変数にする
 let depthBuffer = null;
 let colorBuffer = null;
 
@@ -18,9 +18,7 @@ function clearBuffers() {
     }
 }
 
-const triangles = [{ verts: [{ x: 0, y: 0, z: 4 }, { x: 4, y: 0, z: 8 }, { x: 4, y: 0, z: 4 }], color: "#00ff00" }];
 let chunks = [];
-
 const chunkX = 16, chunkZ = 16, chunkY = 32;
 
 //プレイヤーの目
@@ -65,7 +63,7 @@ function sortChunks() {
             Math.abs((b.z * chunkZ + (chunkZ) / 2) - camera.pos.z)
         );
 
-        return bd - ad;//bd > adの時正の値を返す => bdが前に来る
+        return bd - ad;//bd > adの時正の値を返す => bが前に来る
     });
 }
 
@@ -77,17 +75,21 @@ function mainLoop() {
     for (const c of chunks) {
         c.generateTriangles();
     };
-    if (!camera.isZBuffer) {
-        sortChunks();
-        chunkDraw();
-    }
-    else {
 
-        depthBuffer = new Float32Array(canvas.width * canvas.height);//一次元
+    if (camera.isZBuffer) {
+        //Buffer初期化
+        depthBuffer = new Float32Array(canvas.width * canvas.height);
         colorBuffer = new Uint32Array(canvas.width * canvas.height);
         clearBuffers();
+
         chunkDraw();
+
         present();
+    }
+    else {
+        sortChunks();
+
+        chunkDraw();
     }
 
     playerMove();

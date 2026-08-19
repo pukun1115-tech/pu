@@ -19,7 +19,7 @@ class chunk {
 
         for (let x = 0; x < sizeX; x++) {
             for (let z = 0; z < sizeZ; z++) {
-                const dirtHeight = Math.floor(Math.random() * 3) + 2;
+                const dirtHeight = Math.floor(Math.random() * 4) + 4;
                 for (let y = 0; y < dirtHeight; y++) {
                     map[x][y][z] = 1;//土
                 }
@@ -54,9 +54,9 @@ class chunk {
                         { x: bx + 1, y: by + 1, z: bz + 1 },
                     ];
 
-                    const color = 0xffff0000;
-                    const color2 = 0xff00ff00;
-                    const color3 = 0xff0000ff;
+                    const color = "#ff0000";//0xffff0000;
+                    const color2 = "#00ff00";//0xff00ff00;
+                    const color3 = "#0000ff";//0xff0000ff;
 
                     // 前面
                     if (this.isAir(x, y, z - 1) && camera.pos.z < bz) {
