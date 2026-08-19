@@ -12,8 +12,13 @@ function chunkDraw() {
                 const b = projectPoint(t.verts[1]);
                 const c = projectPoint(t.verts[2]);
                 if (a === null || b === null || c === null) return;
-                //draw2DTriangle(a, b, c, t.color);
-                drawTriangleZBuffer(a, b, c, t.color);
+
+                if (camera.isZBuffer) {
+                    drawTriangleZBuffer(a, b, c, t.color);
+                }
+                else {
+                    draw2DTriangle(a, b, c, t.color);
+                }
             }
         }
     }
