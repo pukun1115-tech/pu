@@ -11,7 +11,7 @@ function chunkDraw() {
                 const a = projectPoint(t.verts[0]);
                 const b = projectPoint(t.verts[1]);
                 const c = projectPoint(t.verts[2]);
-                if (a === null || b === null || c === null) return;
+                if (a === null || b === null || c === null) continue;
 
                 if (camera.isZBuffer) {
                     drawTriangleZBuffer(a, b, c, t.color);
