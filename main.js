@@ -5,9 +5,6 @@ const keys = {};//キーの状態
 document.addEventListener("keydown", e => keys[e.key] = true);//キーが押された時
 document.addEventListener("keyup", e => keys[e.key] = false);//キーが押されてない時
 
-const depthBuffer;
-const colorBuffer;
-
 //zBufferをclear
 function clearBuffers() {
     const far = 1e9;//とても大きい
@@ -73,8 +70,8 @@ function mainLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     resize();
 
-    depthBuffer = new Float32Array(canvas.width * canvas.height);//一次元
-    colorBuffer = new Uint32Array(canvas.width * canvas.height);
+    const depthBuffer = new Float32Array(canvas.width * canvas.height);//一次元
+    const colorBuffer = new Uint32Array(canvas.width * canvas.height);
 
     for (const c of chunks) {
         c.generateTriangles();
