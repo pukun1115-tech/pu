@@ -18,6 +18,12 @@ function chunkDraw() {
     }
 }
 
+//zBufferに描く
+//p0, p1, p2はcanvas座標
+function drawTriangleZBuffer(p0, p1, p2, color) {
+    //
+}
+
 //camera.nearでクリップした三角形0 or 1 or 2個を返す
 //クリップ後の三角形は元の三角形と同じ反時計回りの頂点の順番
 function clip3DTriangle(a, b, c, color) {
