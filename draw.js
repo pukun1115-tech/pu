@@ -67,8 +67,30 @@ function isInsideTriangle(p, v0, v1, v2) {
 
 //z補完
 function interpolateZ(p, v0, v1, v2) {
-    //
+    const x0 = v0.x, y0 = v0.y;
+    const x1 = v1.x, y1 = v1.y;
+    const x2 = v2.x, y2 = v2.y;
+
+    const px = p.x, py = p.y;
+
+    //三角形の面積
+    //v2が原点にあるとして
+    // denom 分母
+    const denom = (x0 - x2) * (y1 - y2) - (x1 - x2) * (y0 - y2);
+
+    //w0は(p, v1, v2)の三角形の面積を(v0, v1, v2)の三角形の面積で割ったもの
+    //割合
+    const w0 = ((px - x2) * (y1 - y2) - (x1 - x2) * (py - y2)) / denom
+
+    //w1 (v0, p, v2)
+    const w1 = ((x0 - x2) * (py - y2) - (px - x2) * (y0 - y2)) / denom;
+    
+    //割合は合計で1になる
+    const w2 = 1 - w0 - w1;
+
+    return w0 * v0.z + w1 * v1.z + w2 * v2.z;
 }
+
 
 
 //データをキャンバスに描画
