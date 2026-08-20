@@ -65,37 +65,37 @@ class chunk {
                     }
 
                     // 前面
-                    if (this.isAir(x, y, z - 1) && camera.pos.z < bz) {
+                    if (this.isAir(x, y, z - 1)) {
                         this.triangles.push({ verts: [v[0], v[1], v[2]], color: color });
                         this.triangles.push({ verts: [v[1], v[3], v[2]], color: color });
                     }
 
                     // 背面
-                    if (this.isAir(x, y, z + 1) && camera.pos.z > bz + 1) {
+                    if (this.isAir(x, y, z + 1)) {
                         this.triangles.push({ verts: [v[4], v[6], v[5]], color: color });
                         this.triangles.push({ verts: [v[5], v[6], v[7]], color: color });
                     }
 
                     // 左
-                    if (this.isAir(x - 1, y, z) && camera.pos.x < bx) {
+                    if (this.isAir(x - 1, y, z)) {
                         this.triangles.push({ verts: [v[0], v[2], v[4]], color: color3 });
                         this.triangles.push({ verts: [v[2], v[6], v[4]], color: color3 });
                     }
 
                     // 右
-                    if (this.isAir(x + 1, y, z) && camera.pos.x > bx + 1) {
+                    if (this.isAir(x + 1, y, z)) {
                         this.triangles.push({ verts: [v[1], v[5], v[3]], color: color3 });
                         this.triangles.push({ verts: [v[3], v[5], v[7]], color: color3 });
                     }
 
                     //上
-                    if (this.isAir(x, y + 1, z) && camera.pos.y > by + 1) {
+                    if (this.isAir(x, y + 1, z)) {
                         this.triangles.push({ verts: [v[2], v[3], v[6]], color: color2 });
                         this.triangles.push({ verts: [v[3], v[7], v[6]], color: color2 });
                     }
 
                     //下
-                    if (this.isAir(x, y - 1, z) && camera.pos.y < by) {
+                    if (this.isAir(x, y - 1, z)) {
                         this.triangles.push({ verts: [v[0], v[4], v[1]], color: color2 });
                         this.triangles.push({ verts: [v[1], v[4], v[5]], color: color2 });
                     }
