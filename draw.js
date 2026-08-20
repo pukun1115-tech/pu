@@ -28,11 +28,11 @@ function chunkDraw() {
     }
 }
 
-function argbToRgbaString(color) {
-    const a = (color >> 0) & 0xFF;//0xは16進数
-    const r = (color >> 8) & 0xFF;
-    const g = (color >> 16)  & 0xFF;
-    const b = (color >> 24)  & 0xFF;
+function abgrToRgbaString(color) {
+    const r = (color >> 0) & 0xFF;//0xは16進数
+    const g = (color >> 8) & 0xFF;
+    const b = (color >> 16)  & 0xFF;
+    const a = (color >> 24)  & 0xFF;
 
     return `rgba(${r},${g},${b},${a / 255})`;
 }
