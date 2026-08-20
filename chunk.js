@@ -54,9 +54,15 @@ class chunk {
                         { x: bx + 1, y: by + 1, z: bz + 1 },
                     ];
 
-                    const color = "#ff0000";//0xffff0000;
-                    const color2 = "#00ff00";//0xff00ff00;
-                    const color3 = "#0000ff";//0xff0000ff;
+                    const color = 0xff0000ff;//abgr形式
+                    const color2 = 0xff00ff00;
+                    const color3 = 0xffff0000;
+
+                    if (!camera.isZBuffer) {
+                        color = abgrToRgbaString(color);
+                        color2 = abgrToRgbaString(color2);
+                        color3 = abgrToRgbaString(color3);
+                    }
 
                     // 前面
                     if (this.isAir(x, y, z - 1) && camera.pos.z < bz) {
