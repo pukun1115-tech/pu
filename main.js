@@ -9,6 +9,15 @@ document.addEventListener("keyup", e => keys[e.key] = false);//キーが押さ�
 let depthBuffer = null;
 let colorBuffer = null;
 
+let time = 0;
+
+window.addEventListener("resize", () => {
+    resize();
+    depthBuffer = new Float32Array(canvas.width * canvas.height);
+    colorBuffer = new Uint32Array(canvas.width * canvas.height);
+}
+);
+
 //zBufferをclear
 function clearBuffers() {
     const far = 1e9;//とても大きい
@@ -33,8 +42,8 @@ const camera = {
     isZBuffer: true
 };
 
-for (let i = 0; i < 4; i++) {
-    for (let j = 0; j < 4; j++) {
+for (let i = 0; i < 1; i++) {
+    for (let j = 0; j < 1; j++) {
         chunks.push(new chunk(i, j));
     }
 }
@@ -77,12 +86,17 @@ function startGame() {
 //メインループ
 function mainLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    resize();
+    if (time % 300 === 0) {
+        resize();
+    }
 
     if (camera.isZBuffer) {
         //Buffer初期化
-        depthBuffer = new Float32Array(canvas.width * canvas.height);
-        colorBuffer = new Uint32Array(canvas.width * canvas.height);
+        if (time % 300 === 0) {
+            depthBuffer = new Float32Array(canvas.width * canvas.height);
+            colorBuffer = new Uint32Array(canvas.width * canvas.height);
+        }
+
         clearBuffers();
 
         chunkDraw();
@@ -97,6 +111,7 @@ function mainLoop() {
 
     playerMove();
 
+    time++;
     requestAnimationFrame(mainLoop);
 }
 
