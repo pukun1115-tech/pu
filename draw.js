@@ -256,5 +256,5 @@ function projectPoint(v) {
 
     const x = (v.x * f) / v.z;
     const y = (v.y * f) / v.z;
-    return { x: canvas.width / 2 + (canvas.height / 2) * x, y: canvas.height / 2 - (canvas.height / 2) * y, z: v.z };
+    return { x: canvas.width / 2 + (Math.min(canvas.height, canvas.width) / 2) * x, y: canvas.height / 2 - (Math.min(canvas.height, canvas.width) / 2) * y, z: v.z };
 }
