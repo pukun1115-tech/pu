@@ -19,7 +19,7 @@ class chunk {
 
         for (let x = 0; x < sizeX; x++) {
             for (let z = 0; z < sizeZ; z++) {
-                const dirtHeight = Math.floor(Math.random() * 4) + 4;
+                const dirtHeight = Math.floor(Math.random() * 4) + 1;
                 for (let y = 0; y < dirtHeight; y++) {
                     map[x][y][z] = 1;//土
                 }
