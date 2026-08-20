@@ -49,7 +49,7 @@ function drawTriangleZBuffer(p0, p1, p2, color) {
     //全部のピクセルを調べる
     for (let y = minY; y <= maxY; y++) {
         for (let x = minX; x <= maxX; x++) {
-            if (y < 0 || y > canvas.height || x < 0 || x > canvas.width) continue;
+            if (y < 0 || y >= canvas.height || x < 0 || x >= canvas.width) continue;
             //三角形の中のみ
             if (!isInsideTriangle({ x: x, y: y }, p0, p1, p2)) continue;
 
