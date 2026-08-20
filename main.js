@@ -33,8 +33,8 @@ const camera = {
     isZBuffer: true
 };
 
-for (let i = 0; i < 5; i++) {
-    for (let j = 0; j < 5; j++) {
+for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) {
         chunks.push(new chunk(i, j));
     }
 }
@@ -67,14 +67,17 @@ function sortChunks() {
     });
 }
 
+function startGame() {
+    for (const c of chunks) {
+        c.generateTriangles();
+    };
+    mainLoop();
+}
+
 //メインループ
 function mainLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     resize();
-
-    for (const c of chunks) {
-        c.generateTriangles();
-    };
 
     if (camera.isZBuffer) {
         //Buffer初期化
@@ -97,4 +100,4 @@ function mainLoop() {
     requestAnimationFrame(mainLoop);
 }
 
-mainLoop();
+startGame();
