@@ -45,6 +45,15 @@ function drawTriangleZBuffer(p0, p1, p2, color) {
 
             //z補完
             const z = interpolateZ({ x: x, y: y }, p0, p1, p2);
+
+            //Bufferインデックス
+            const idx = y * canvas.width + x;
+
+            //Bufferに書き込むか
+            if (z < depthBuffer[idx]) {
+                depthBuffer[idx] = z;
+                colorBuffer[idx] = color;
+            }
         }
     }
 }
