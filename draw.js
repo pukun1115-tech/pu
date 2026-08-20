@@ -28,6 +28,15 @@ function chunkDraw() {
     }
 }
 
+function argbToRgbaString(color) {
+    const a = (color >> 0) & 0xFF;//0xは16進数
+    const r = (color >> 8) & 0xFF;
+    const g = (color >> 16)  & 0xFF;
+    const b = (color >> 24)  & 0xFF;
+
+    return `rgba(${r},${g},${b},${a / 255})`;
+}
+
 //zBufferに描く
 //p0, p1, p2はcanvas座標xとyと3Dのz座標を持つ
 function drawTriangleZBuffer(p0, p1, p2, color) {
