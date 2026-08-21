@@ -54,9 +54,9 @@ class chunk {
                         { x: bx + 1, y: by + 1, z: bz + 1 },
                     ];
 
-                    const color = 0xff0000ff;//abgr形式
-                    const color2 = 0xff00ff00;
-                    const color3 = 0xffff0000;
+                    let color = 0xff0000ff;//abgr形式
+                    let color2 = 0xff00ff00;
+                    let color3 = 0xffff0000;
 
                     if (!camera.isZBuffer) {
                         color = abgrToRgbaString(color);
@@ -72,8 +72,8 @@ class chunk {
 
                     // 背面
                     if (this.isAir(x, y, z + 1)) {
-                        this.triangles.push({ verts: [v[4], v[6], v[5]], color: color });
-                        this.triangles.push({ verts: [v[5], v[6], v[7]], color: color });
+                        this.triangles.push({ verts: [v[4], v[5], v[6]], color: color });
+                        this.triangles.push({ verts: [v[5], v[7], v[6]], color: color });
                     }
 
                     // 左
@@ -84,8 +84,8 @@ class chunk {
 
                     // 右
                     if (this.isAir(x + 1, y, z)) {
-                        this.triangles.push({ verts: [v[1], v[5], v[3]], color: color3 });
-                        this.triangles.push({ verts: [v[3], v[5], v[7]], color: color3 });
+                        this.triangles.push({ verts: [v[1], v[3], v[5]], color: color3 });
+                        this.triangles.push({ verts: [v[3], v[7], v[5]], color: color3 });
                     }
 
                     //上
@@ -102,8 +102,6 @@ class chunk {
                 }
             }
         }
-
-        this.sortTriangles();
     }
 
     // 三角形を重心とカメラの距離でソートする

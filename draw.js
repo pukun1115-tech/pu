@@ -9,6 +9,8 @@ function chunkDraw() {
             const v2 = worldToCamera(tri.verts[1]);
             const v3 = worldToCamera(tri.verts[2]);
 
+            //if ((v2.x - v1.x) * (v3.y - v1.y) - (v2.y - v1.y) * (v3.x - v1.x) >= 0) continue;
+
             //近すぎる三角形をクリップする
             const cliped = clip3DTriangle(v1, v2, v3, tri.color);
             for (const t of cliped) {
@@ -29,10 +31,10 @@ function chunkDraw() {
 }
 
 function abgrToRgbaString(color) {
-    const r = (color >> 0) & 0xFF;//0xは16進数
-    const g = (color >> 8) & 0xFF;
-    const b = (color >> 16)  & 0xFF;
-    const a = (color >> 24)  & 0xFF;
+    const r = ((color >> 0) & 0xFF);//0xは16進数
+    const g = ((color >> 8) & 0xFF);
+    const b = ((color >> 16) & 0xFF);
+    const a = ((color >> 24) & 0xFF);
 
     return `rgba(${r},${g},${b},${a / 255})`;
 }
@@ -103,7 +105,7 @@ function interpolateZ(p, v0, v1, v2) {
 
     //w1 (v0, p, v2)
     const w1 = ((x0 - x2) * (py - y2) - (px - x2) * (y0 - y2)) / denom;
-    
+
     //割合は合計で1になる
     const w2 = 1 - w0 - w1;
 
